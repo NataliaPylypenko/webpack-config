@@ -8,11 +8,15 @@ const PATHS = {
 };
 
 module.exports = {
-    // mode: 'development',
-    entry: './src/index.js',
+    entry: {
+        // module: [`${PATHS.src}/js/your-module.js`],
+        common: [`${PATHS.src}/js/common.js`],
+    },
     output: {
         path: PATHS.web,
-        filename: 'my-first-webpack.bundle.js',
+        // filename: `js/[name].js`,
+        filename: 'js/[name].[chunkhash].js',
+        clean: true,
     },
     module: {
         rules: [
