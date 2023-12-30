@@ -1,6 +1,7 @@
 const path = require('path');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyPlugin = require("copy-webpack-plugin");
 
 const PATHS = {
     src: path.resolve(__dirname, './src'),
@@ -8,7 +9,8 @@ const PATHS = {
 };
 
 module.exports  = (env) => {
-    console.log('mode: ', env.mode);
+    const isDev = env.mode === 'development';
+    const isProd = !isDev;
 
     return {
         mode: env.mode ?? 'development',
@@ -32,27 +34,31 @@ module.exports  = (env) => {
                 {
                     test: /\.((c|sa|sc)ss)$/,
                     use: [
-                        {
-                            loader: MiniCssExtractPlugin.loader,
-                            options: {
-                                esModule: false,
-                            },
-                        },
+                        isDev ? "style-loader" : MiniCssExtractPlugin.loader,
                         "css-loader",
+                        "sass-loader"
                     ],
                 },
             ]
         },
         plugins: [
-            new MiniCssExtractPlugin({
-                filename: `styles.css`,
+            isProd && new MiniCssExtractPlugin({
+                filename: `css/[name].[contenthash].css`,
             }),
             new HtmlWebpackPlugin({
-                template: './src/index.html',
-            })
+                template: `${PATHS.src}/index.html`,
+            }),
+            new CopyPlugin({
+                patterns: [
+                    // { from: `${PATHS.src}/image`, to: `image` },
+                    { from: `${PATHS.src}/static`, to: 'static' }
+                ],
+            }),
         ],
-        devServer: {
-            port: 8081
-        },
+        devtool: isDev && 'inline-source-map',
+        devServer: isDev ? {
+            port: env.port ?? 8081,
+            open: true
+        } : undefined,
     }
 };
