@@ -24,6 +24,12 @@ module.exports  = (env) => {
             filename: 'js/[name].[chunkhash].js',
             clean: true,
         },
+        resolve: {
+            alias: {
+                '@': PATHS.src,
+                '@assets': `${PATHS.src}/assets`,
+            }
+        },
         module: {
             rules: [
                 {
@@ -39,19 +45,34 @@ module.exports  = (env) => {
                         "sass-loader"
                     ],
                 },
+                {
+                    test: /\.(png|svg|webp|jpe?g|gif)$/,
+                    type: 'asset/resource',
+                },
             ]
+        },
+        optimization: {
+            splitChunks: {
+                // include all types of chunks
+                chunks: 'all',
+            },
         },
         plugins: [
             isProd && new MiniCssExtractPlugin({
                 filename: `css/[name].[contenthash].css`,
             }),
             new HtmlWebpackPlugin({
+                title: "Webpack Config",
                 template: `${PATHS.src}/index.html`,
+                // favicon: `${PATHS.src}/assets/favicon.ico`,
+                minify: {
+                    collapseWhitespace: isProd,
+                }
             }),
             new CopyPlugin({
                 patterns: [
-                    // { from: `${PATHS.src}/image`, to: `image` },
-                    { from: `${PATHS.src}/static`, to: 'static' }
+                    { from: `${PATHS.src}/image`, to: `image` },
+                    { from: `${PATHS.src}/assets`, to: 'assets' },
                 ],
             }),
         ],

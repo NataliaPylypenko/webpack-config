@@ -6,7 +6,7 @@
   "scripts": {
     "start": "webpack serve",
     "dev": "webpack-dev-server --env mode=development --open",
-    "watch": "webpack-dev-server --env mode=development",
+    "watch": "webpack-dev-server --env mode=development --watch",
     "build": "webpack --env mode=production"
   },
   "keywords": [
