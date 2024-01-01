@@ -15,8 +15,8 @@ module.exports  = (env) => {
     return {
         mode: env.mode ?? 'development',
         entry: {
-            // module: [`${PATHS.src}/js/your-module.js`],
-            common: [`${PATHS.src}/js/common.js`],
+            // module: ['@babel/polyfill', `${PATHS.src}/js/your-module.js`],
+            common: ['@babel/polyfill', `${PATHS.src}/js/common.js`]
         },
         output: {
             path: PATHS.web,
@@ -49,6 +49,18 @@ module.exports  = (env) => {
                     test: /\.(png|svg|webp|jpe?g|gif)$/,
                     type: 'asset/resource',
                 },
+                {
+                    test: /\.(?:js|mjs|cjs)$/,
+                    exclude: /node_modules/,
+                    use: {
+                        loader: 'babel-loader',
+                        options: {
+                            presets: [
+                                ['@babel/preset-env', { targets: "defaults" }]
+                            ]
+                        }
+                    }
+                }
             ]
         },
         optimization: {
